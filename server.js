@@ -18,6 +18,9 @@ const pool = new Pool({
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Pally Engine is running!' });
 });
+app.get('/', (req, res) => {
+  res.send('Pally Engine Backend is Live and Running!');
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
