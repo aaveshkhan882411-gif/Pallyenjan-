@@ -1,6 +1,7 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -18,11 +19,11 @@ const pool = new Pool({
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Pally Engine is running!' });
 });
-app.get('/', (req, res) => {
-  res.send('Pally Engine Backend is Live and Running!');
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
