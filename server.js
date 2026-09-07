@@ -20,8 +20,15 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Pally Engine is running!' });
 });
 
+app.use(express.static(__dirname));
+
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  const indexPath = path.join(__dirname, 'index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      res.send('<h1>Pally Web App Backend is Live</h1><p>Frontend file structure mismatch. Please check repository folder name.</p>');
+    }
+  });
 });
 
 app.listen(port, () => {
