@@ -3,106 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pally Engine - Login & Dashboard</title>
+    <title>Pally — Empathetic AI Companion & Platform</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        
         body {
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: #0B0F17;
+            color: #F8FAFC;
+            height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            flex-direction: column;
+            overflow: hidden;
         }
-        .app-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 2rem;
-            background: #1e293b;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+
+        :root {
+            --gold-primary: #D4AF37;
+            --gold-light: #F4C430;
+            --bg-card: #161D2A;
+            --border-color: #26334D;
         }
+
+        /* Header Bar */
         .header {
-            text-align: center;
-            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: #0F172A;
+            border-bottom: 1px solid var(--border-color);
         }
-        .header h1 {
-            color: #38bdf8;
-            font-size: 1.8rem;
+
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .hug-mark {
+            width: 28px; height: 28px;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            border-radius: 50% 20% 50% 50%;
         }
-        .form-group {
-            margin-bottom: 1.2rem;
+        .brand-name {
+            font-size: 1.3rem; font-weight: 700;
+            background: linear-gradient(to right, #FFF, var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #94a3b8;
+
+        /* Top 3-Dot Menu */
+        .top-menu-btn { background: none; border: none; color: var(--gold-primary); font-size: 1.6rem; cursor: pointer; padding: 4px 8px; }
+        .dropdown-menu {
+            display: none; position: absolute; top: 55px; right: 15px;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 8px; width: 250px; box-shadow: 0 10px 25px rgba(0,0,0,0.7); z-index: 1000;
         }
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: #fff;
-            outline: none;
+        .dropdown-menu.show { display: block; }
+        .dropdown-item {
+            padding: 12px 16px; font-size: 0.85rem; color: #94A3B8;
+            border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.2s;
         }
-        .form-group input:focus {
-            border-color: #38bdf8;
+        .dropdown-item:hover { background: #1E293B; color: #FFF; }
+        .dropdown-item:last-child { border-bottom: none; }
+
+        /* Ad Ticker Strip */
+        .ad-ticker-strip {
+            background: #020617; border-bottom: 1px solid var(--border-color);
+            padding: 6px 15px; font-size: 0.8rem; display: flex; justify-content: space-between; color: var(--gold-light);
         }
-        .btn {
-            width: 100%;
-            padding: 0.75rem;
-            border: none;
-            border-radius: 6px;
-            background: #0284c7;
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
+
+        /* Chat Viewport Grid */
+        .chat-container {
+            flex: 1; display: flex; flex-direction: column;
+            max-width: 900px; width: 100%; margin: 0 auto; padding: 15px; overflow: hidden;
         }
-        .btn:hover {
-            background: #0369a1;
+        .chat-messages {
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 5px;
         }
-        .footer-text {
-            margin-top: 1.5rem;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #64748b;
-        }
+        .message { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.4; }
+        .message.bot { background: var(--bg-card); border: 1px solid var(--border-color); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .message.user { background: linear-gradient(135deg, #1E293B, #0F172A); border: 1px solid var(--gold-primary); align-self: flex-end; border-bottom-right-radius: 2px; }
+
+        /* Input Controls & Voice Options */
+        .voice-controls { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; }
+        .voice-select { background: #0F172A; border: 1px solid var(--border-color); color: var(--gold-light); padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; }
+        .input-area { display: flex; gap: 10px; align-items: center; }
+        .input-area input { flex: 1; padding: 14px; border-radius: 8px; border: 1px solid var(--border-color); background: #0F172A; color: #FFF; outline: none; }
+        .input-area input:focus { border-color: var(--gold-primary); }
+        .btn-send { padding: 14px 20px; background: linear-gradient(135deg, var(--gold-primary), var(--gold-light)); border: none; border-radius: 8px; color: #000; font-weight: bold; cursor: pointer; }
+
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 2000; }
+        .modal-card { background: var(--bg-card); border: 1px solid var(--gold-primary); padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; }
+        .modal-card h2 { color: var(--gold-light); margin-bottom: 15px; font-size: 1.2rem; }
+        .btn-google { width: 100%; padding: 12px; background: #FFF; color: #000; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="header">
-            <h1>Pally Engine</h1>
-            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 5px;">Agent & Web Control Panel</p>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-container">
+            <div class="hug-mark"></div>
+            <span class="brand-name">Pally</span>
         </div>
+        <button class="top-menu-btn" onclick="toggleMenu()">⋮</button>
 
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" placeholder="admin@pally.com" required>
+        <!-- Dropdown Menu -->
+        <div class="dropdown-menu" id="dropdownMenu">
+            <div class="dropdown-item" onclick="openModal('ownerModal')">
+                <small>System</small><br>
+                <strong style="color: var(--gold-light);">Owner Panel (Secret)</strong>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+            <div class="dropdown-item" onclick="openModal('authModal')">
+                <small>Partners</small><br>
+                <span>Advertiser & Affiliate Hub (Google Sign-In)</span>
             </div>
-            <button type="submit" class="btn">Login to Dashboard</button>
-        </form>
-
-        <div class="footer-text">
-            Pally Platform Engine &copy; 2026
+            <div class="dropdown-item" onclick="openModal('dataModal')">
+                <small>Marketplace</small><br>
+                <span>Auto Data Selling Hub</span>
+            </div>
+            <div class="dropdown-item" onclick="burnSession()">
+                <strong style="color: #EF4444;">🔥 Privacy Burn Session</strong>
+            </div>
         </div>
     </div>
 
+    <!-- Ad Ticker Strip -->
+    <div class="ad-ticker-strip">
+        <span id="adContent">✨ Partner Offer: Wellness & Food Discounts Active</span>
+        <span>100% Encrypted & Anonymous</span>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                Hey! Main Pally hoon—aapka personal AI friend. Aaj aapka din kaisa raha? Main yahin hoon agar aapko baat karni ho. 🙂
+            </div>
+        </div>
+
+        <div class="voice-controls">
+            <label style="font-size: 0.8rem; color: #94A3B8;">Voice Mode:</label>
+            <select class="voice-select" id="voiceSelect">
+                <option value="female">Female (Warm & Empathetic)</option>
+                <option value="male">Male (Confident & Friendly)</option>
+            </select>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Type a message (Hindi, Hinglish, English)..." onkeypress="handleKeyPress(event)">
+            <button class="btn-send" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Google Auth Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-card">
+            <h2>Partner Portal</h2>
+            <p style="font-size: 0.85rem; color: #94A3B8;">Sign in with Google to manage your Affiliate links and Ad Campaigns.</p>
+            <button class="btn-google" onclick="alert('Redirecting to Google One-Tap OAuth...')">
+                <span>Google Sign-In</span>
+            </button>
+            <button style="background:none; border:none; color:#94A3B8; margin-top:15px; cursor:pointer;" onclick="closeModal('authModal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Owner Modal -->
+    <div class="modal-overlay" id="ownerModal">
+        <div class="modal-card">
+            <h2>Pally Owner Secret Panel</h2>
+            <input type="password" id="ownerKey" placeholder="Enter Access Password" style="width:100%; padding:10px; margin:10px 0; background:#0F172A; border:1px solid #26334D; color:#fff; border-radius:6px;">
+            <button class="btn-send" style="width: 100%;" onclick="alert('Owner Key Authenticated. Live OTA Console Active.')">Access Console</button>
+            <button style="background:none; border:none; color:#94A3B8; margin-top:15px; cursor:pointer;" onclick="closeModal('ownerModal')">Close</button>
+        </div>
+    </div>
+
+    <!-- Data Selling Hub Modal -->
+    <div class="modal-overlay" id="dataModal">
+        <div class="modal-card">
+            <h2>Auto Data Selling Hub</h2>
+            <p style="font-size: 0.85rem; color: #94A3B8; margin-bottom: 15px;">Purchase Anonymized Consumer Insights (Zero PII Data).</p>
+            <button class="btn-send" style="width: 100%;" onclick="alert('Auto Data Package Selected. Redirecting to Razorpay/PayPal...')">Buy Signal Package ($149)</button>
+            <button style="background:none; border:none; color:#94A3B8; margin-top:15px; cursor:pointer;" onclick="closeModal('dataModal')">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() { document.getElementById('dropdownMenu').classList.toggle('show'); }
+        function openModal(id) { document.getElementById('dropdownMenu').classList.remove('show'); document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function burnSession() {
+            document.getElementById('chatMessages').innerHTML = '<div class="message bot">Session permanently burned. Your privacy is safe. Reloading...</div>';
+            setTimeout(() => { location.reload(); }, 1500);
+        }
+
+        function handleKeyPress(e) { if(e.key === 'Enter') sendMessage(); }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voiceType = document.getElementById('voiceSelect').value;
+                const voices = window.speechSynthesis.getVoices();
+                
+                // Select Female or Male Voice Pitch
+                if (voiceType === 'female') {
+                    utterance.pitch = 1.2;
+                    utterance.rate = 0.95;
+                } else {
+                    utterance.pitch = 0.8;
+                    utterance.rate = 1.0;
+                }
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const msg = input.value.trim();
+            if(!msg) return;
+
+            const chat = document.getElementById('chatMessages');
+            chat.innerHTML += `<div class="message user">${msg}</div>`;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg })
+                });
+                const data = await res.json();
+                
+                chat.innerHTML += `<div class="message bot">${data.reply}</div>`;
+                chat.scrollTop = chat.scrollHeight;
+
+                // Trigger High Quality Speech
+                speakText(data.reply);
+
+                // Update Dynamic Banner if Affiliate link triggered
+                if (data.affiliateLink) {
+                    document.getElementById('adContent').innerHTML = `🔥 Sponsored Offer: <a href="${data.affiliateLink}" target="_blank" style="color: var(--gold-light);">${data.affiliateText}</a>`;
+                }
+            } catch(e) {
+                chat.innerHTML += `<div class="message bot">Main aapki baat samajh raha hoon! Fikr mat kijiye, main hamesha aapke sath hoon.</div>`;
+            }
+        }
+    </script>
 </body>
 </html>
